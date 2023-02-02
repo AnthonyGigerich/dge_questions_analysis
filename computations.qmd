@@ -1,0 +1,856 @@
+---
+title: Analyse Questionnaire DREAL Grand Est
+author: Datactivist
+date: '01 31, 2023'
+toc: true
+toc-location: body
+number-depth: 2
+number-sections: true
+jupyter: python3
+format:
+  html:
+    css: styles.css
+---
+
+:::{.callout-note}
+In construction
+:::
+
+
+```{python}
+#| echo: false
+import pandas as pd
+import plotly.express as px
+import plotly.subplots as sp
+
+data = pd.read_csv("data/questionsNODCP.csv", sep=",")
+
+yesno_color_map = {
+    "Oui": "rgb(50, 200, 50)",
+    "Non": "rgb(255, 50, 50)",
+}
+
+tools_competences_color_map = {
+    "jamais utilisé": "rgb(150, 0, 0)",
+    "débutant": "rgb(255, 50, 50)",
+    "avancé": "rgb(50, 255, 50)",
+    "expert": "rgb(0, 150, 0)",
+}
+
+tools_mapping = {
+    "qgis": "QGIS",
+    "python": "Python",
+    "python ": "Python",
+    "r": "R",
+    "calc": "CALC",
+    "access": "ACCESS",
+    "acces": "ACCESS",
+    "infocentre": "Infocentre (BO)",
+    "infocentres": "Infocentre (BO)",
+    "metabase": "Metabase",
+    "gitlab": "Gitlab",
+    "géo-ide": "GEO-IDE",
+    "géo-ide carto": "GEO-IDE Carto",
+    "géoide carto": "GEO-IDE Carto",
+    "géo-ide\xa0carto": "GEO-IDE Carto",
+    "mapinfo": "MapInfo",
+    "javascript": "Javascript",
+    "excel": "Excel",
+    "exel": "Excel",
+    "superset": "Superset",
+    "data grand est": "Data Grand Est",
+    "datagrandest": "Data Grand Est",
+    "pgadmin": "pgAdmin",
+    "asgard": "ASGARD",
+    "asgard ": "ASGARD",
+    "psql": "pSQL",
+    "rshiny": "RShiny",
+    "taiga": "Taïga",
+    "redmine": "Redmine",
+    "beyond": "Beyond",
+    "observatoires": "Observatoires",
+    "postgre/postgis": "PostreSQL/PostGIS",
+    "autres": "Autres",
+    "sas": "SAS",
+    "arcgis": "ARCGIS",
+    "php": "PHP",
+    "html": "HTML",
+    "css": "CSS",
+}
+
+tools_fusion_mapping = [["Outil web intéractif, type tableau de bord"],["Plateforme web d’accès aux données (géo-ide, DataGrandEst, Observatoires….)"],["Calc, Excel", "Calc, Excel.1", "Calc, Excel.2", "Calc, Excel.3", "Calc, Excel (macros)"],["QGis", "QGis.1", "QGis.2", "QGis (developpement de plugin)"],["Infocentre (Business object)", "Infocentre (Business object).1", "Infocentre (Business object).2"],["Access", "Access.1", "Access.2", "Access.3", "Access.4"],["Metabase", "Metabase et outils similaires"],["pgAdmin", "pgAdmin, pSQL (postgre/postgis)", "pgAdmin, pSQL (postgre/postgis).1"],["Beyond"],["Map info"],["ArcGIS"],["SAS"],["R", "R (RStudio...)"],["Python", "Python (PyCharm, Jupyter, Spyder, Anaconda, VS CODE, Qgis, …)", "Python (PyCharm, Jupyter, Spyder, Anaconda, VS CODE, Qgis, …).1"],["Asgard (module QGis)"],["MySQL"],["DataGrandEst"],["Géo-IDE carto"],["Apache Superset"],["GitLab", "GitLab.1"],["RShiny (RStudio, Golem, …)"],["Javascript"],["Taïga : outil agile"],["RedMine (ticketing)"],["Resana"]]
+```
+
+## Général
+
+### Répartition des répondants
+
+:::{.column-body-outset}
+
+::: {.panel-tabset}
+
+### Structure
+
+```{python}
+#| echo: false
+
+df = data.rename(columns={"Quelle est votre structure d'appartenance (DREAL, DDT, DRAAF...) ?" : "structure"})[
+    "structure"
+]
+
+fig1 = px.pie(
+    df,
+    names="structure",
+)
+
+fig1.update_layout(autosize=False, width=750, height=750)
+fig1.update_traces(hoverinfo='percent+value', textinfo='label+percent+value')
+
+fig1.show()
+```
+
+Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+
+### Service
+
+```{python}
+#| echo: false
+
+
+df = data.rename(columns={"Dans quel service travaillez-vous ?" : "service"})[
+    "service"
+]
+
+df_grouped = df.groupby(df).size().reset_index(name='counts')
+df_grouped.sort_values("counts", ascending=False, inplace=True)
+
+# keep only the 23 highest count
+df_grouped = df_grouped[:-23]
+
+# keep track of the rest of the categories in "Autres"
+others = df.isin(df_grouped["service"])
+df.loc[~others] = "Autres"
+
+
+fig2 = px.pie(
+    df,
+    names="service",
+)
+fig2.update_layout(autosize=False, width=750, height=750)
+fig2.update_traces(hoverinfo='label+value', textinfo='label+percent+value')
+```
+
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+
+:::
+
+:::
+
+### Inscriptions
+
+<span class="column-margin">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</span>
+
+::: {.centered}
+
+```{python}
+#| echo: false
+#| column: page-right
+
+df = data.rename(columns={"Inscrivez-vous pour être tenu au courant de l'avancée du projet": "inscription"})["inscription"]
+
+fig = px.pie(
+    data,
+    names = ["Inscrit", "Pas inscrit"],
+    values = [df.count(), df.size - df.count()],
+)
+fig.update_layout(autosize=False, width=400, height=400)
+fig.update_traces(hoverinfo='label+value', textinfo='label+percent+value')
+
+fig.show()
+```
+
+:::
+
+## Accés et visualisation de données
+
+Il y a plusieurs tabs pour chaque étape ↓
+
+::::: {.panel-tabset}
+
+## Besoin
+
+### Besoin d'accéder aux données et/ou de les visualiser
+
+```{python}
+#| echo: false
+
+def create_need_missiong_fig(column, title):
+    
+    df = data.rename(columns={column: "besoin"})
+
+    fig = px.pie(
+        df,
+        names="besoin",
+        color="besoin",
+        color_discrete_map=yesno_color_map,
+    )
+    fig.update_layout(autosize=False)
+    fig.update_traces(hoverinfo='label+value', textinfo='percent+value')
+
+    return fig
+
+fig1 = create_need_missiong_fig("Pour la réalisation de mes missions j'ai besoin d'accèder aux données et/ou de les visualiser", "Besoin d'accéder aux données et/ou de les visualiser")
+fig1.show()
+```
+
+
+## Compétences
+### Compétences actuelles
+
+```{python}
+#| echo: false
+
+def create_competences_fig(competences):
+    df = data[competences].count()
+    names = []
+    for name in df.index:
+        if len(name) > 34:
+            names.append(name[:40] + "...")
+        else:
+            names.append(name)
+    fig = px.bar(df, x=names, y=0)
+    fig.update_layout(autosize=False, width=700, height=600, xaxis_tickangle=25)
+    fig.update_xaxes(title="Competence")
+    fig.update_yaxes(title='Count')
+    fig.update_traces(texttemplate='%{y}', textposition='inside')
+    return fig
+
+competences = ["je fais une demande au service compétent", "je sais où trouver la donnée (données internes, extérieures, open data…)", "je connais les formats de données, je sais choisir l’outil pour ouvrir la donnée"]
+fig = create_competences_fig(competences)
+fig.show()
+
+```
+
+## Outils
+### Connaissances des outils
+
+:::{.column-page}
+
+```{python}
+#| echo: false
+
+def create_tools_knowledge_fig(tools, sort=False, keep_jamais=True):
+
+    if keep_jamais:
+        states = ["jamais utilisé",  "débutant", "avancé", "expert"]
+    else:
+        states = ["débutant", "avancé", "expert"]
+
+    df = data[tools].dropna().reset_index()
+
+    # reshape dataframe
+    df_melt = pd.melt(df, id_vars=["index"], value_vars=tools, var_name="tool", value_name="state")
+    agg_df = pd.crosstab(df_melt["tool"], df_melt["state"]).reset_index()
+    agg_df["total"] = agg_df["débutant"] + agg_df["avancé"] + agg_df["expert"]
+    agg_df = agg_df.sort_values(by=["total"], ascending=False)
+
+    names = []
+    for tool in agg_df.tool.unique():
+                
+        if len(tool) > 2 and tool[-2] == ".":
+            tool = tool[:-2]
+        
+        if len(tool) > 34:
+            names.append(tool[:34] + "...")
+        else:
+            names.append(tool)
+    
+    
+    # create stacked bar chart
+    fig = px.bar(agg_df, x=names, y=states, barmode="stack", color_discrete_map=tools_competences_color_map)
+    fig.update_layout(autosize=False, width=1000, height=600, xaxis_tickangle=25)
+    
+    return fig
+
+tools = ["Outil web intéractif, type tableau de bord", "Plateforme web d’accès aux données (géo-ide, DataGrandEst, Observatoires….)", "Calc, Excel", "QGis", "Infocentre (Business object)", "Access", "Metabase", "pgAdmin", "Beyond"]
+fig = create_tools_knowledge_fig(tools)
+fig.show()
+```
+
+:::
+
+## Envie Formations
+### Souhaitez-vous suivre une formation ?
+
+```{python}
+#| echo: false
+
+def create_want_formation_fig(question1, question2):
+    
+    df = data[question1].fillna(data[question2]).reset_index()
+    df = df.rename(columns={question1:"Envie"})
+    
+    fig = px.pie(
+        df,
+        names="Envie",
+        color="Envie",
+        color_discrete_map=yesno_color_map,
+    )
+    fig.update_layout(autosize=False)
+    fig.update_traces(hoverinfo='label+value', textinfo='percent+value', title="Envie d'une formation")
+    
+    return fig
+
+fig2 = create_want_formation_fig("Souhaiteriez-vous suivre une formation sur un des outils ci-dessus ?", "Souhaiteriez-vous suivre une formation sur un outil d'accès ou de visualisation de données ?")
+fig2.show()
+```
+
+
+## Type Formations
+### Outils demandés
+
+```{python}
+#| echo: false
+
+def create_tools_formation_fig(column, top_x_cut=0, width=750, height=750):
+    tools = {}
+    tools_desc = {}
+    
+    for outils in data[column]:
+        if str(outils) == "nan":
+            continue
+        for outil in outils.split(","):
+            usage = ""
+            if len(outil.split(";")) > 1:
+                usage = outil.split(";")[1]
+                outil = outil.split(";")[0]
+
+            if not outil:
+                continue
+
+            outil = outil.lower()
+
+            if outil in tools_mapping:
+                outil = tools_mapping[outil]
+
+            if outil not in tools:
+                tools_desc[outil] = ""
+                tools[outil] = 0
+
+            if usage:
+                tools_desc[outil] += usage + "<br>"
+            tools[outil] += 1
+
+    sorted_tools = dict(sorted(tools.items(), key=lambda item: item[1], reverse=True))
+    if top_x_cut > 0:
+        top_x = list(sorted_tools.keys())[:top_x_cut]
+        others = {k: v for k, v in sorted_tools.items() if k not in top_x}
+        other_desc = "<br>".join(others.keys())
+        top_x.append("Autres")
+        values = [tools[tool] for tool in top_x[:-1]]
+        values.append(sum(others.values()))
+        names = top_x
+    else:
+        names = list(sorted_tools.keys())
+        values = [tools[tool] for tool in names]
+        other_desc = ""
+
+    sorted_tools_desc = {k: v for k, v in tools_desc.items() if k in names}
+    sorted_tools_desc["Autres"] = other_desc
+    fig = px.pie(
+        names=names,
+        values=values,
+    )
+    fig.update_layout(autosize=False, width=width, height=height)
+    fig.update_traces(hoverinfo='label+value', textinfo='label+percent+value', customdata=[sorted_tools_desc[desc] for desc in names], hovertemplate="%{customdata}")
+
+    return fig
+
+fig = create_tools_formation_fig("Si oui, lequel/lesquels et pour quelles utilisations ?")
+fig.show()
+```
+
+:::::
+
+## Traitement de données
+
+::::: {.panel-tabset}
+
+## Besoin
+### Besoin de réaliser des traitements sur les données
+
+```{python}
+#| echo: false
+
+fig1 = create_need_missiong_fig("Pour la réalisation de mes missions j'ai besoin de réaliser des traitements sur les données", "Besoin de réaliser des traitements sur les données")
+fig1.show()
+
+```
+
+## Compétences
+### Compétences actuelles
+
+
+```{python}
+#| echo: false
+
+competences = ["je sais produire de la donnée", "je sais mettre en qualité les données récupérées", "je sais croiser des données (avec des référentiels, données métier …)", "Je sais réaliser des analyses"]
+fig = create_competences_fig(competences)
+fig.show()
+
+```
+
+## Outils
+### Connaissances des outils
+
+:::{.column-page}
+
+```{python}
+#| echo: false
+
+tools = ["Calc, Excel.1", "QGis.1", "Map info", "ArcGIS", "Infocentre (Business object).1", "SAS", "Access.1", "R", "Python"]
+fig = create_tools_knowledge_fig(tools)
+fig.show()
+
+```
+
+:::
+
+## Envie Formations
+### Souhaitez-vous suivre une formation ?
+
+```{python}
+#| echo: false
+
+fig2 = create_want_formation_fig("Souhaiteriez-vous suivre une formation sur un des outils ci-dessus ?.1", "Souhaiteriez-vous suivre une formation sur un outil de traitement de données ?")
+fig2.show()
+
+```
+
+## Type Formations
+### Outils demandés
+
+```{python}
+#| echo: false
+
+fig = create_tools_formation_fig("Si oui, lequel/lesquels et pour quelles utilisations ?.1")
+fig.show()
+
+```
+
+:::::
+
+## Gestion et administration de données
+
+::::: {.panel-tabset}
+
+## Besoin
+### Besoin d'administrater des données
+
+```{python}
+#| echo: false
+
+fig1 = create_need_missiong_fig("Pour la réalisation de mes missions je fais de la gestion et de l'administration de données", "Besoin de faire de la gestion et de l'administration de données")
+fig1.show()
+
+```
+
+## Compétences
+### Compétences actuelles
+
+
+```{python}
+#| echo: false
+
+competences = ["je sais structurer les données pour les intégrer à une base de données", "je sais créer une base de données", "je sais gérer une base de données (arborescente, relationnelle…)", "Je sais administrer un serveur de base de données (gestion des droits utilisateurs, capacité….)"]
+fig = create_competences_fig(competences)
+fig.show()
+
+```
+
+## Outils
+### Connaissances des outils
+
+:::{.column-page}
+
+```{python}
+#| echo: false
+
+tools = ["Calc, Excel.2", "QGis.2", "Asgard (module QGis)", "Access.2", "pgAdmin, pSQL (postgre/postgis)", "MySQL"]
+fig = create_tools_knowledge_fig(tools)
+fig.show()
+
+```
+
+:::
+
+## Envie Formations
+### Souhaitez-vous suivre une formation ?
+
+```{python}
+#| echo: false
+
+fig2 = create_want_formation_fig("Souhaiteriez-vous suivre une formation sur un des outils ci-dessus ?.2", "Souhaiteriez-vous suivre une formation sur un outil de gestion et d'administration de données ?")
+fig2.show()
+
+```
+
+## Type Formations
+### Outils demandés
+
+```{python}
+#| echo: false
+
+fig = create_tools_formation_fig("Si oui, lequel/lesquels et pour quelles utilisations ?.2")
+fig.show()
+
+```
+
+:::::
+
+
+## Gestion d'outils de visualisation de données
+
+::::: {.panel-tabset}
+
+## Besoin
+### Besoin d'administrer des outils de visualisation de données
+
+```{python}
+#| echo: false
+
+fig1 = create_need_missiong_fig("Pour la réalisation de mes missions j'administre des outils de visualisation de données", "Besoin d'administrer des outils de visualisation de données")
+fig1.show()
+
+```
+
+## Outils
+### Connaissances des outils
+
+:::{.column-page}
+
+```{python}
+#| echo: false
+
+tools = ["Calc, Excel.3", "Infocentre (Business object).2", "Access.3", "DataGrandEst", "Géo-IDE carto", "Apache Superset", "Metabase et outils similaires"]
+fig = create_tools_knowledge_fig(tools)
+fig.show()
+
+```
+
+:::
+
+## Envie Formations
+### Souhaitez-vous suivre une formation ?
+
+```{python}
+#| echo: false
+
+fig2 = create_want_formation_fig("Souhaiteriez-vous suivre une formation sur un des outils ci-dessus ?.3", "Souhaiteriez-vous suivre une formation sur un outil de visualisation de données ?")
+fig2.show()
+
+```
+
+## Type Formations
+### Outils demandés
+
+```{python}
+#| echo: false
+
+fig = create_tools_formation_fig("Si oui, lequel/lesquels et pour quelles utilisations ?.3")
+fig.show()
+
+```
+
+:::::
+
+## Automatisation
+
+::::: {.panel-tabset}
+
+## Besoin
+### Besoin de faire de l'automatisation
+
+```{python}
+#| echo: false
+
+fig1 = create_need_missiong_fig("Pour la réalisation de mes missions je fais de l'automatisation (par exemple pour le traitement de données", "Besoin de faire de l'automatisation")
+fig1.show()
+
+```
+
+## Compétences
+### Compétences actuelles
+
+
+```{python}
+#| echo: false
+
+competences = ["je sais utiliser des scripts existants", "je sais adapter des scripts existants (nouvelles données, nouveau traitement)", "je sais créer des scripts"]
+fig = create_competences_fig(competences)
+fig.show()
+
+```
+
+## Outils
+### Connaissances des outils
+
+:::{.column-page}
+
+```{python}
+#| echo: false
+
+tools = ["Calc, Excel (macros)", "Python (PyCharm, Jupyter, Spyder, Anaconda, VS CODE, Qgis, …)", "R (RStudio...)", "pgAdmin, pSQL (postgre/postgis).1", "GitLab"]
+fig = create_tools_knowledge_fig(tools)
+fig.show()
+
+
+```
+
+:::
+
+## Envie Formations
+### Souhaitez-vous suivre une formation ?
+
+```{python}
+#| echo: false
+
+fig2 = create_want_formation_fig("Souhaiteriez-vous suivre une formation sur un des outils ci-dessus ?.4", "Souhaiteriez-vous suivre une formation sur un langage d'automatisation de traitements ?")
+fig2.show()
+
+```
+
+## Type Formations
+### Outils demandés
+
+```{python}
+#| echo: false
+
+fig = create_tools_formation_fig("Si oui, lequel/lesquels et pour quelles utilisations ?.4")  
+fig.show()
+
+```
+
+:::::
+
+
+## Développement d'applications
+
+::::: {.panel-tabset}
+
+## Besoin
+### Besoin de développer des applications web ou locale
+
+```{python}
+#| echo: false
+
+fig1 = create_need_missiong_fig("Pour la réalisation de mes missions, je développe des applications (web, locale, ...) et des scripts, y compris en mode gestion de projet", "Besoin de développer des applications web ou locale")
+fig1.show()
+
+```
+
+## Compétences
+### Compétences actuelles
+
+
+```{python}
+#| echo: false
+
+competences = ["je sais développer des applications ou des scripts", "je sais gérer un projet de développement"]
+fig = create_competences_fig(competences)
+fig.show()
+
+```
+
+## Outils
+### Connaissances des outils
+
+:::{.column-page}
+
+```{python}
+#| echo: false
+
+tools = ["Python (PyCharm, Jupyter, Spyder, Anaconda, VS CODE, Qgis, …).1", "RShiny (RStudio, Golem, …)", "Javascript", "Access.4", "QGis (developpement de plugin)", "Taïga : outil agile", "GitLab.1", "RedMine (ticketing)", "Resana"]
+fig = create_tools_knowledge_fig(tools)
+fig.show()
+
+```
+
+:::
+
+## Envie Formations
+### Souhaitez-vous suivre une formation ?
+
+```{python}
+#| echo: false
+
+fig2 = create_want_formation_fig("Souhaiteriez-vous suivre une formation sur un des outils ci-dessus ?.5", "Souhaiteriez-vous suivre une formation sur un outil ou langage de développement d'applications ?")
+fig2.show()
+
+```
+
+## Type Formations
+### Outils demandés
+
+```{python}
+#| echo: false
+
+fig = create_tools_formation_fig("Si oui, lequel/lesquels et pour quelles utilisations ?.5")
+fig.show()
+
+```
+
+:::::
+
+## Analyse globale
+
+Data Visualisation faites sur la totalité du questionnaire.
+
+### Outils utilisés
+
+:::{.column-page}
+
+```{python}
+#| echo: false
+def get_highest_competence(comp_list):
+
+    if "expert" in comp_list.values:
+        return "expert"
+    elif "avancé" in comp_list.values:
+        return "avancé"
+    elif "débutant" in comp_list.values:
+        return "débutant"
+    else:
+        return "jamais utilisé"
+
+for tool_list in tools_fusion_mapping:
+    data[tool_list[0]] = data.apply(
+        lambda row: get_highest_competence(row[tool_list]),
+        axis=1,
+    )
+
+tools = [tool[0] for tool in tools_fusion_mapping]
+fig = create_tools_knowledge_fig(tools, sort=True, keep_jamais=False)
+fig.show()
+```
+
+:::
+
+### Outils utilisés : DREAL / DDT
+
+:::{.column-page}
+
+```{python}
+#| echo: false
+
+def get_structure(structure):
+
+    if "DREAL" in structure:
+        return "DREAL"
+    elif "DDT" in structure:
+        return "DDT"
+    else:
+        return "UNKNOWN"
+
+def swap_structure(structure, competence):
+
+    if competence in ["expert", "avancé", "débutant"]:
+        result = get_structure(structure)
+    else:
+        result = "jamais utilisé"
+        
+    return result
+
+def create_tools_structures_fig(tools, sort=False):
+
+    tools += ["Quelle est votre structure d'appartenance (DREAL, DDT, DRAAF...) ?"]
+
+    for tool in tools:
+        data[tool] = data.apply(
+            lambda row: swap_structure(row["Quelle est votre structure d'appartenance (DREAL, DDT, DRAAF...) ?"], row[tool]),
+            axis=1,
+        )
+    
+    states = ["DDT", "DREAL"]
+
+    df = data[tools].dropna().reset_index()
+
+    # reshape dataframe
+    df_melt = pd.melt(df, id_vars=["index"], value_vars=tools, var_name="tool", value_name="state")
+    agg_df = pd.crosstab(df_melt["tool"], df_melt["state"]).reset_index()
+    agg_df["total"] = agg_df["DDT"] + agg_df["DREAL"]
+    agg_df = agg_df.sort_values(by=["total"], ascending=False)
+
+    names = []
+    for tool in agg_df.tool.unique():
+                
+        if len(tool) > 2 and tool[-2] == ".":
+            tool = tool[:-2]
+        
+        if len(tool) > 34:
+            names.append(tool[:34] + "...")
+        else:
+            names.append(tool)
+    
+    
+    # create stacked bar chart
+    fig = px.bar(agg_df, x=names, y=states, barmode="overlay", color_discrete_map={
+    "DDT": "orange",
+    "DREAL": "green",
+})
+    fig.update_layout(autosize=False, width=1000, height=600, xaxis_tickangle=25)
+    
+    return fig
+
+fig = create_tools_structures_fig(tools, sort=True)
+fig.show()
+
+```
+
+:::
+
+:::{.column-page}
+
+
+### Formations Outils demandées
+
+```{python}
+#| echo: false
+
+def aggregate_formations(asked_formations):
+
+    done_tool = set()
+    agg_formations = set()
+    for formations in asked_formations:
+        
+        if type(formations) != str:
+            continue
+        
+        for formation in formations.split(","):
+            
+            tool = formation.split(";")[0].lower()
+
+            if tool in tools_mapping:
+                tool = tools_mapping[tool]
+
+            if tool in done_tool:
+                continue
+            done_tool.add(tool)
+            
+            agg_formations.add(formation)
+
+    return ",".join(agg_formations)
+
+formations = ["Si oui, lequel/lesquels et pour quelles utilisations ?", "Si oui, lequel/lesquels et pour quelles utilisations ?.1", "Si oui, lequel/lesquels et pour quelles utilisations ?.2", "Si oui, lequel/lesquels et pour quelles utilisations ?.3", "Si oui, lequel/lesquels et pour quelles utilisations ?.4", "Si oui, lequel/lesquels et pour quelles utilisations ?.5"]
+
+data["formations"] = data.apply(
+    lambda row: aggregate_formations(row[formations]),
+    axis=1,
+)
+
+fig = create_tools_formation_fig("formations", top_x_cut=15, width=950, height=750)
+fig.show()
+
+```
+
+:::
