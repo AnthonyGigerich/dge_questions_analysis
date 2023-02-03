@@ -42,6 +42,7 @@ tools_mapping = {
     "python": "Python",
     "python ": "Python",
     "r": "R",
+    "rshiny": "RShiny",
     "calc": "CALC",
     "access": "ACCESS",
     "acces": "ACCESS",
@@ -50,6 +51,35 @@ tools_mapping = {
     "metabase": "Metabase",
     "gitlab": "Gitlab",
     "géo-ide": "GEO-IDE",
+    "geoide": "GEO-IDE",
+    "postgis": "Postgre/Postgis",
+    "geokit": "Géokit",
+    " geokit": "Géokit",
+    "dash": "Python",
+    "urbansimul": "Plateforme Web Divers",
+    "showmystreet.com": "Plateforme Web Divers",
+    "oiso": "Plateforme Web Divers",
+    "gunenv": "Plateforme Web Divers",
+    "rnc2": "Plateforme Web Divers",
+    "france cadastre": "Plateforme Web Divers",
+    "phpmyadmin": "PHP",
+    "geoportail": "Géoportail",
+    "insee": "INSEE",
+    "sql": "SQL",
+    "sqlite": "SQL",
+    "ftp": "FTP",
+    "telepac": "Telepac",
+    "autostep": "Autostep",
+    "fme": "FME",
+    "isis": "ISIS",
+    "outils interne": "Outils Internes",
+    "outils internes": "Outils Internes",
+    "outils métier": "Outils Métier",
+    "qfield": "QGIS",
+    "postgresql": "Postgre/Postgis",
+    "Dash (Python)": "Python",
+    "rstudio": "R",
+    "osmose": "Osmose 2",
     "géo-ide carto": "GEO-IDE Carto",
     "géoide carto": "GEO-IDE Carto",
     "géo-ide\xa0carto": "GEO-IDE Carto",
@@ -64,12 +94,14 @@ tools_mapping = {
     "asgard": "ASGARD",
     "asgard ": "ASGARD",
     "psql": "pSQL",
-    "rshiny": "RShiny",
+    "rshiny": "R",
     "taiga": "Taïga",
     "redmine": "Redmine",
     "beyond": "Beyond",
     "observatoires": "Observatoires",
     "postgre/postgis": "PostreSQL/PostGIS",
+    "sas report viewer": "SAS Report Viewer",
+    "nocodb": "NocoDB",
     "autres": "Autres",
     "sas": "SAS",
     "arcgis": "ARCGIS",
@@ -809,10 +841,11 @@ fig.show()
 
 :::
 
-:::{.column-page}
-
 
 ### Formations Outils demandées
+
+:::{.column-page}
+
 
 ```{python}
 #| echo: false
@@ -849,6 +882,28 @@ data["formations"] = data.apply(
 )
 
 fig = create_tools_formation_fig("formations", top_x_cut=15, width=950, height=750)
+fig.show()
+
+```
+
+:::
+
+
+### Outils non listés
+
+:::{.column-page}
+
+```{python}
+#| echo: false
+
+non_listed_tools = ["Utilisez-vous un outil qui n'est pas dans liste ci-dessus pour accéder aux données ou les visualiser ? Si oui, lequel/lesquels ?", "Utilisez-vous un outil qui n'est pas dans liste ci-dessus pour faire du traitement de données ? Si oui, lequel/lesquels ?", "Utilisez-vous un outil qui n'est pas dans liste ci-dessus pour gérer et administrer les données ? Si oui, lequel/lesquels ?", "Utilisez-vous un outil qui n'est pas dans liste ci-dessus pour visualiser les données ? Si oui, lequel/lesquels ?", "Utilisez-vous un outil qui n'est pas dans liste ci-dessus pour automatiser les traitements de données ? Si oui, lequel/lesquels ?", "Utilisez-vous un outil qui n'est pas dans liste ci-dessus pour gérer et admnistrer les données ? Si oui, lequel/lesquels ?"]
+
+data["non_listed_tools"] = data.apply(
+    lambda row: aggregate_formations(row[non_listed_tools]),
+    axis=1,
+)
+
+fig = create_tools_formation_fig("non_listed_tools", top_x_cut=12, width=750, height=750)
 fig.show()
 
 ```
