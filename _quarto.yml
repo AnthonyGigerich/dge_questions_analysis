@@ -1,0 +1,4 @@
+body-header: |
+    This page brought to you by <https://example.com>
+margin-header: |
+    ![Logo image](/static/logo_NB.png)

@@ -9,7 +9,9 @@ number-sections: true
 jupyter: python3
 format:
   html:
-    css: styles.css
+    theme:
+      light: themes/flatly-datactivist.scss
+      dark: themes/darkly-datactivist.scss
 ---
 
 :::{.callout-note}
@@ -245,7 +247,9 @@ fig1.show()
 def create_competences_fig(competences):
     df = data[competences].count()
     names = []
+    customdata = []
     for name in df.index:
+        customdata.append(name)
         if len(name) > 34:
             names.append(name[:40] + "...")
         else:
@@ -253,8 +257,12 @@ def create_competences_fig(competences):
     fig = px.bar(df, x=names, y=0)
     fig.update_layout(autosize=False, width=700, height=600, xaxis_tickangle=25)
     fig.update_xaxes(title="Competence")
-    fig.update_yaxes(title='Count')
-    fig.update_traces(texttemplate='%{y}', textposition='inside')
+    fig.update_yaxes(title='Nombre de personne')
+    fig.update_traces(
+        customdata=customdata,
+        hovertemplate="Compétence: %{customdata}<br>Nombre de personne: %{y}", 
+        textposition='inside'
+    )
     return fig
 
 competences = ["je fais une demande au service compétent", "je sais où trouver la donnée (données internes, extérieures, open data…)", "je connais les formats de données, je sais choisir l’outil pour ouvrir la donnée"]
@@ -287,7 +295,10 @@ def create_tools_knowledge_fig(tools, sort=False, keep_jamais=True):
     agg_df = agg_df.sort_values(by=["total"], ascending=False)
 
     names = []
+    customdata = []
     for tool in agg_df.tool.unique():
+
+        customdata.append(tool)
                 
         if len(tool) > 2 and tool[-2] == ".":
             tool = tool[:-2]
@@ -297,10 +308,17 @@ def create_tools_knowledge_fig(tools, sort=False, keep_jamais=True):
         else:
             names.append(tool)
     
-    
+   
     # create stacked bar chart
     fig = px.bar(agg_df, x=names, y=states, barmode="stack", color_discrete_map=tools_competences_color_map)
+    fig.update_traces(
+        customdata=customdata,
+        hovertemplate="Outils: %{customdata}<br>Nombre d'usagers: %{y}"
+    )
     fig.update_layout(autosize=False, width=1000, height=600, xaxis_tickangle=25)
+    fig.update_xaxes(title="Outils")
+    fig.update_yaxes(title="Utilisation")
+
     
     return fig
 
@@ -826,7 +844,7 @@ def create_tools_structures_fig(tools, sort=False):
     
     
     # create stacked bar chart
-    fig = px.bar(agg_df, x=names, y=states, barmode="overlay", color_discrete_map={
+    fig = px.bar(agg_df, x=names, y=states, barmode="group", color_discrete_map={
     "DDT": "orange",
     "DREAL": "green",
 })
